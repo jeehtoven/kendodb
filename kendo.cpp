@@ -78,6 +78,8 @@ int gt_count;
 stringstream selection;
 string parameter_to_change;
 string new_value;
+ofstream config_new;
+string config_new_file;
 
 //Selection
 cin >> choice;
@@ -104,14 +106,14 @@ switch (choice)
 
 
 		//Creates directory for tables and indexes
-		directory = "mkdir ./kendo/";
+		directory = "mkdir -p kendo_db/";
 		cin >> name;
 		cout << "Creating database directory for tables and indexes..." <<endl;
 		result = directory + name;
 		system(result.c_str());
 
 		cout << "Now building configuration file..."<<endl;
-		attributes_filename = "./kendo/" + name + "/" + name + ".config";
+		attributes_filename = "kendo_db/" + name + "/" + name + ".config";
 		attributes.open(attributes_filename.c_str(),ios::out);
 		attributes << "<auto_close>OFF</auto_close>" << endl;
 		attributes << "<auto_shrink>OFF</auto_shrink>" << endl;
@@ -192,15 +194,15 @@ switch (choice)
         		case 1:
                 		cout <<"You want to change the database name. Which database would you like to change?"<<endl;
 				
-				system("ls ./kendo");
+				system("ls /kendo_db");
 				cout <<"Enter the database name: ";
 				cin >> alter_name;
 				cout <<"What do you want to change the name to?"<<endl;
 				cout <<"Enter the new database name here: ";
 				cin >> alter_name_new;
 
-				alter_name_rename = "mv ./kendo/";
-				space = " ./kendo/";
+				alter_name_rename = "mv /kendo_db/";
+				space = " /kendo_db/";
 				result_2 = alter_name_rename + alter_name + space + alter_name_new; 
 				
 				system(result_2.c_str());
@@ -208,11 +210,11 @@ switch (choice)
                 		break;
 			case 2:
 				cout <<"You want to modify the database files. Which database do you want to work in? "<<endl;
-				system("ls ./kendo");
+				system("ls /kendo_db");
                                 cout <<"Enter the database name: ";
                                 cin >> alter_name;
 				cout <<"Select the filename you would like to modify."<<endl;
-				filename_list = "ls ./kendo/" + alter_name;
+				filename_list = "ls /kendo_db/" + alter_name;
 				cout <<"Enter the filename: ";
 				system(filename_list.c_str()); 
 				cin >> alter_file;
@@ -220,8 +222,8 @@ switch (choice)
 				cout <<"Enter the new filename: ";
 				cin >> alter_file_new;
 
-				alter_name_rename = "mv ./kendo/";
-				space = " ./kendo/";
+				alter_name_rename = "mv /kendo_db/";
+				space = " /kendo_db/";
 				result_2 = alter_name_rename + alter_name + "/" + alter_file + space + alter_name + "/" +  alter_file_new; 
 				
 				system(result_2.c_str());
@@ -229,10 +231,10 @@ switch (choice)
                                 break;
 			case 3:
 				cout <<"You want to configure the database attributes. Select an database."<<endl;
-				system("ls ./kendo");
+				system("ls kendo_db");
                                 cout <<"Enter the database name: ";
                                 cin >> alter_name;
-				filename_list = "./kendo/" + alter_name;
+				filename_list = "kendo_db/" + alter_name;
 				config = filename_list + "/" + alter_name + ".config"; 
 				read_config.open(config.c_str());
 
@@ -273,9 +275,8 @@ switch (choice)
 				read_config.close();
 
 				read_config.open(config.c_str());
-				while(read_config.good())
+				while(getline(read_config,attribute_line))
 				{
-					getline(read_config,attribute_line);
 					string str = attribute_line;
 
                                         //Parameter name
@@ -284,6 +285,10 @@ switch (choice)
                                         unsigned last = str.find_first_of(gt1);
                                         unsigned last_end = last;
                                         string strNew = str.substr(first_end,last_end-first_end);
+					
+					//create temp file
+					config_new_file = filename_list + "/" + alter_name + ".new"; 
+					config_new.open(config_new_file.c_str(),ios::app); 
 					if(strNew == parameter_to_change)
 					{
 						//Parameter value
@@ -292,11 +297,21 @@ switch (choice)
                                         	unsigned last_val = str.find(ltc);
                                         	unsigned last_end_val = last_val;
                                         	string strNew_val = str.substr(first_end_val,last_end_val-first_end_val);
-						replace(attribute_line, strNew_val, new_value);
-						cout << "The new parameter value of " + new_value + " has been updated successfully." << endl;
-						read_config << attribute_line; 
+						replace(str, strNew_val, new_value);
+						//cout << "The new parameter value of " + new_value + " has been updated successfully." << endl;
+						config_new << str << endl; 
 					}
+
+					else
+					{
+						config_new << str << endl;
+					}
+
+						config_new.close(); 
 				}
+
+					remove(config.c_str());
+                                        rename(config_new_file.c_str(),config.c_str());
 				break;
 		}
                 break;
