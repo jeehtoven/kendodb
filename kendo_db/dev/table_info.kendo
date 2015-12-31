@@ -1,0 +1,4 @@
+customers;first_name;varchar(255)
+customers;last_name;varchar(255)
+customers;address;varchar(255)
+customers;state;varchar(255)

@@ -80,6 +80,13 @@ string parameter_to_change;
 string new_value;
 ofstream config_new;
 string config_new_file;
+string new_table_name;
+int new_table_columns_number;
+string new_table_columns;
+ofstream table_structure;
+int alt_table_select;
+string table_change_column;
+string table_select_file_search;
 
 //Selection
 cin >> choice;
@@ -316,20 +323,84 @@ switch (choice)
 		}
                 break;
         case 7:
-                cout <<"You want to create a new table."<<endl;
+	{
+				cout <<"You want to create a new table. Select an database."<<endl;
+                                system("ls kendo_db");
+                                cout <<"Enter the database name: ";
+                                cin >> alter_name;
+                                filename_list = "kendo_db/" + alter_name;
+				cout << "What is the table name?" << endl;
+				cout << "Enter the new table name: ";
+				cin >> new_table_name;
+				cout << "Enter the number of columns: ";
+				cin >> new_table_columns;
+				cout << "You wish to create a table named " + new_table_name + " with " + new_table_columns + " columns." << endl;
+
+				string table_structure_filename = "kendo_db/" + alter_name + "/table_info.kendo";
+				table_structure.open(table_structure_filename);
+				new_table_columns_number = atoi(new_table_columns.c_str());
+				string column_name[new_table_columns_number];
+				string column_type[new_table_columns_number];
+				for (int a = 0; a < new_table_columns_number; a++)
+				{
+					//Gathering table information to build the structure. Compile with -std=c++0x parameter for to_string().
+					cout << "Enter the column name for column #" + to_string(a);
+					cout << ": ";
+					cin >> column_name[a];
+					cout << "What type of column is it?: ";
+					cin >> column_type[a];
+					cout << "Column #" + to_string(a);
+					cout << " named " + column_name[a] + " of type " + column_type[a] + " created." << endl;
+					table_structure << new_table_name + ";" + column_name[a] + ";" + column_type[a] << endl; 
+				}
+				table_structure.close();
                 break;
+	}
         case 8:
-                cout <<"You want to modify a table."<<endl;
-                break;
+		{
+                	cout <<"You want to modify a table."<<endl;
+			cout << "Select one of the following options." << endl;
+			cout << "1. Add a column in a table." << endl;
+			cout << "2. Drop a column in a table." << endl;
+			cout << "3. Modify a the datatype in a column." << endl;
+			cout << "Make your selection: ";
+			cin >> alt_table_select;
+			cout << "Thanks." << endl;
+
+			switch (alt_table_select)
+			{
+				case 1:
+				{
+					cout <<"You want to add a column to a table. Select a database."<<endl;
+                                	system("ls kendo_db");
+                                	cout <<"Enter the database name: ";
+                                	cin >> alter_name;
+                                	filename_list = "kendo_db/" + alter_name;
+					cout << "Please select a table." << endl;
+					table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
+					system(table_select_file_search.c_str());
+					cout << "Enter your selection: ";
+					cin >> table_change_column;
+					
+				}
+			}
+                	break;
+		}
         case 9:
-                cout <<"You want to delete a table."<<endl;
-                break;
+                {	
+			cout <<"You want to delete a table."<<endl;
+               		break;
+		}
         case 10:
-                cout <<"You want to create an index."<<endl;
-                break;
+                {	
+			cout <<"You want to create an index."<<endl;
+                	break;
+		}
         case 11:
-                cout <<"You want to delete an index."<<endl;
-                break;
+                {	
+			cout <<"You want to delete an index."<<endl;
+                	break;
+		}
 
 }
 }
