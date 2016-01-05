@@ -87,6 +87,14 @@ ofstream table_structure;
 int alt_table_select;
 string table_change_column;
 string table_select_file_search;
+ofstream add_table_column;
+string add_column_name;
+string add_column_type;
+ofstream table_config_add;
+ifstream add_table_column_new;
+string semicolon;
+fstream create_new_table;
+string cnt_name;
 
 //Selection
 cin >> choice;
@@ -337,7 +345,7 @@ switch (choice)
 				cout << "You wish to create a table named " + new_table_name + " with " + new_table_columns + " columns." << endl;
 
 				string table_structure_filename = "kendo_db/" + alter_name + "/table_info.kendo";
-				table_structure.open(table_structure_filename);
+				table_structure.open(table_structure_filename,ios::app);
 				new_table_columns_number = atoi(new_table_columns.c_str());
 				string column_name[new_table_columns_number];
 				string column_type[new_table_columns_number];
@@ -354,6 +362,8 @@ switch (choice)
 					table_structure << new_table_name + ";" + column_name[a] + ";" + column_type[a] << endl; 
 				}
 				table_structure.close();
+				cnt_name = "kendo_db/" + alter_name + "/" + new_table_name + ".table";
+				create_new_table.open(cnt_name,ios::app);
                 break;
 	}
         case 8:
@@ -382,6 +392,48 @@ switch (choice)
 					cout << "Enter your selection: ";
 					cin >> table_change_column;
 					
+					string table_structure_filename = "kendo_db/" + alter_name + table_change_column;
+                                	//table_structure.open(table_structure_filename);
+                                        cout << "Enter the column name for column. " << endl;
+                                        cout << "Column name: ";
+                                        cin >> add_column_name;
+                                        cout << "What type of column is it?: ";
+                                        cin >> add_column_type;
+
+					table_config_add.open(filename_list + "/table_info.kendo",ios::app);
+					string trim = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
+					cout << trim + ";" + add_column_name + ";" + add_column_type << endl;
+					table_config_add << trim + ";" + add_column_name + ";" + add_column_type << endl;
+                                        cout << "Column named " + add_column_name + " of type " + add_column_type + " created." << endl;
+
+                                        //table_structure << new_table_name + ";" + add_column_name + ";" + add_column_type << endl; 
+                                	//table_structure.close();
+
+					table_config_add.close();
+
+					string str_atc = "kendo_db/" + alter_name + "/temp_" + table_change_column + ".table";
+					string str_atc_new = "kendo_db/" + alter_name + "/" + table_change_column + ".table";
+					
+					cout << "Creating temp file " + str_atc << endl;
+					cout << "Opening table " + str_atc_new << endl;
+
+					add_table_column.open(str_atc.c_str(),ios::app);
+					add_table_column_new.open(str_atc_new.c_str());
+					getline(add_table_column_new,semicolon);
+					//cout << "SEMICOLON LINE: " + semicolon << endl;
+					string newline = semicolon + ";";
+					//cout << "NEWLINE: " + newline << endl;
+					add_table_column << newline << endl;
+
+					add_table_column.close();
+					add_table_column_new.close();
+
+					remove(str_atc_new.c_str());
+                                        rename(str_atc.c_str(),str_atc_new.c_str());
+					
+					cout << "Your new column was successfully added." << endl;
+
+
 				}
 			}
                 	break;

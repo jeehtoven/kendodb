@@ -4,5 +4,5 @@ development;name;varchar(255)
 development;project;varchar(255)
 engineers;name;varchar(255)
 engineers;address;varchar(255)
+
 engineers;phone;varchar(255)
-engineers;salary;int
