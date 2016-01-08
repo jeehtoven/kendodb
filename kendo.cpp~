@@ -425,7 +425,7 @@ switch (choice)
 
 					table_config_add.open(filename_list + "/table_info.kendo",ios::app);
 					string trim = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
-					cout << trim + ";" + add_column_name + ";" + add_column_type + ";" << endl;
+					cout << trim + ";" + add_column_name + ";" + add_column_type << endl;
 					table_config_add << trim + ";" + add_column_name + ";" + add_column_type << ";" << endl;
                                         cout << "Column named " + add_column_name + " of type " + add_column_type + " created." << endl;
 
