@@ -8,6 +8,9 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdexcept>
+#include <cstring>
+#include <cstdio>
+#include <algorithm>
 
 using namespace std;
 
@@ -21,10 +24,19 @@ bool replace(std::string& str, const std::string& from, const std::string& to) {
     return true;
 }
 
+template<typename T>
+void removeSubstrs(basic_string<T>& s, const basic_string<T>& p) 
+{
+   size_t n = p.length();
+
+   for (size_t i = s.find(p);
+        i != string::npos;
+        i = s.find(p))
+   s.erase(i, n);
+}
 
 int main()
 {
-
 //Linux specific system call. Comment this line out if on Windows.
 system("clear");
 
@@ -95,7 +107,16 @@ ifstream add_table_column_new;
 string semicolon;
 fstream create_new_table;
 string cnt_name;
-
+string check_for_column;
+ifstream drop_column_search;
+string newstring;
+string char_to_be_gone;
+char* temp_char;
+string str3;
+ofstream temp_dcs;
+ifstream table_edit;
+string table_edit_line_sc;
+ofstream temp_table_edit;
 //Selection
 cin >> choice;
 
@@ -433,6 +454,93 @@ switch (choice)
 					
 					cout << "Your new column was successfully added." << endl;
 
+				}
+
+				case 2:
+				{
+					cout << "You want to drop a column. Select a database." << endl;
+					system("ls kendo_db");
+                                        cout <<"Enter the database name: ";
+                                        cin >> alter_name;
+                                        filename_list = "kendo_db/" + alter_name;
+                                        cout << "Please select a table." << endl;
+                                        table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
+                                        system(table_select_file_search.c_str());
+                                        cout << "Enter your selection: ";
+                                        cin >> table_change_column;
+
+                                        string table_structure_filename = "kendo_db/" + alter_name + table_change_column;
+                                        cout << "Enter the column name for column. " << endl;
+                                        cout << "Column name: ";
+                                        cin >> add_column_name;
+
+					cout << "DB: " + alter_name + " TB: " + table_change_column + " Col.: " + add_column_name << endl;
+
+					drop_column_search.open("kendo_db/" + alter_name + "/table_info.kendo");
+					temp_dcs.open("kendo_db/" + alter_name + "/table_info_temp.kendo",ios::app);
+					cout << "Now opening /kendo_db/" + alter_name + "/table_info.kendo..." << endl;
+					int tally = 0;
+					while(getline(drop_column_search, check_for_column))
+					{
+						cout << "Before: " + check_for_column << endl;
+						char_to_be_gone = add_column_name + ";";
+						string found_table = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
+						size_t ft = check_for_column.find(found_table);
+						size_t found = check_for_column.find(char_to_be_gone);
+						if(ft != string::npos)
+						{
+							tally = tally + 1;
+							cout << tally << endl;
+
+						}
+						if (found != string::npos && ft != string::npos)
+						{
+							cout << "Deleting column..." << endl;
+						}
+
+						else 
+						{
+							temp_dcs << check_for_column << endl;
+						}
+					}
+
+					drop_column_search.close();
+					temp_dcs.close();
+
+					string old_name = "kendo_db/" + alter_name + "/table_info.kendo";
+					string new_name = "kendo_db/" + alter_name + "/table_info_temp.kendo";
+					remove(old_name.c_str());
+                                        rename(new_name.c_str(),old_name.c_str());
+
+					table_structure_filename = "kendo_db/" + alter_name + "/" + table_change_column + ".table";
+					cout << "Updating kendo_db/" + alter_name + "/" + table_change_column + ".table" << endl; 
+					table_edit.open(table_structure_filename.c_str());
+					string table_edit_line;
+					int track = 1;
+					string column_array[99]; //Assuming the table has 99 columns
+					for(int z = 1; z <= tally; z++)
+					{
+						while(getline(table_edit,table_edit_line,';') && getline(table_edit,table_edit_line_sc));
+						{
+							cout << "Original line: " << endl; 
+							cout << table_edit_line_sc << endl;
+							cout << "Parsing line..." << endl;
+							cout << "Tally: " << tally << " Track: " << track << endl;
+							column_array[track] = table_edit_line; 
+
+							if(track == tally)
+							{
+								cout << "Column: " + column_array[track] << endl;
+								//cout << track << endl;
+								string value_to_erase = column_array[track] + ";";
+								removeSubstrs(table_edit_line_sc, value_to_erase);
+								cout << "Parsed line: " << endl;
+								cout << table_edit_line_sc << endl;
+							}
+								track++;
+
+						}
+					}
 
 				}
 			}
