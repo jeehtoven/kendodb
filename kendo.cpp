@@ -119,6 +119,11 @@ ifstream table_edit_sc;
 string table_edit_line_sc;
 ofstream temp_table_edit;
 int digit;
+fstream gcn;
+string gcn_names;
+string column_names[3];
+int col_count;
+string table_structure_filename;
 //Selection
 cin >> choice;
 
@@ -471,11 +476,20 @@ switch (choice)
                                         cout << "Enter your selection: ";
                                         cin >> table_change_column;
 
-                                        string table_structure_filename = "kendo_db/" + alter_name + table_change_column;
-                                        cout << "Enter the column name for column. " << endl;
+                                        string tsf = "kendo_db/" + alter_name + "/table_info.kendo";
+                                        cout << "Enter the column name to be deleted. " << endl;
+					gcn.open(tsf.c_str());
+					//getline(gcn, gcn_names,';');
+					//cout << gcn_names << endl;
+					while(gcn.good())
+					{
+						getline(gcn, gcn_names,';');						
+						cout << "Line: " << gcn_names << endl;
+					}
+					cout << endl;
                                         cout << "Column name: ";
                                         cin >> add_column_name;
-
+					
 					cout << "DB: " + alter_name + " TB: " + table_change_column + " Col.: " + add_column_name << endl;
 
 					drop_column_search.open("kendo_db/" + alter_name + "/table_info.kendo");
