@@ -1,7 +1,7 @@
+engineers;name;varchar(255);
+engineers;salary;varchar(255);
+engineers;address;int;
 sales;name;int;
 sales;amount;int;
 development;name;varchar(255);
 development;project;varchar(255);
-engineers;name;varchar(255);
-engineers;salary;int;
-engineers;phone;int;

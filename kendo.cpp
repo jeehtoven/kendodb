@@ -11,6 +11,7 @@
 #include <cstring>
 #include <cstdio>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -130,8 +131,21 @@ cin >> choice;
 switch (choice)
 {
 	case 1:
-		cout <<"You want to extract data."<<endl;
+	{
+		cout <<"You want to extract data. Select a database."<<endl;
+                system("ls kendo_db");
+                cout <<"Enter the database name: ";
+                cin >> alter_name;
+                filename_list = "kendo_db/" + alter_name;
+		cout << "Please select a table." << endl;
+		table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
+		system(table_select_file_search.c_str());
+		cout << "Enter your selection: ";
+		cin >> table_change_column;
+
+		
 		break;
+	}
 
         case 2:
                 cout <<"You want to update data."<<endl;
@@ -470,24 +484,41 @@ switch (choice)
                                         cout <<"Enter the database name: ";
                                         cin >> alter_name;
                                         filename_list = "kendo_db/" + alter_name;
-                                        cout << "Please select a table." << endl;
-                                        table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
-                                        system(table_select_file_search.c_str());
-                                        cout << "Enter your selection: ";
-                                        cin >> table_change_column;
+                                        //cout << "Please select a table." << endl;
+                                        //table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
+                                        //system(table_select_file_search.c_str());
+                                        //cout << "Enter your selection: ";
+                                        //cin >> table_change_column;
 
                                         string tsf = "kendo_db/" + alter_name + "/table_info.kendo";
+					cout << "Please select a table." << endl;
+					table_select_file_search ="ls -A1 " + filename_list + "/*.table | xargs -n 1 basename"; 
+					system(table_select_file_search.c_str());
+					cin >> table_change_column;
+					string trim = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);							
                                         cout << "Enter the column name to be deleted. " << endl;
 					gcn.open(tsf.c_str());
+					
 					//getline(gcn, gcn_names,';');
 					//cout << gcn_names << endl;
-					while(gcn.good())
-					{
-						getline(gcn, gcn_names,';');						
-						cout << "Line: " << gcn_names << endl;
+					int q = 0;
+					int r = 0;
+					string gcn_whole;
+					while(getline(gcn >> ws, gcn_names,';'))
+					{	
+						if (gcn_names == trim)
+						{
+	
+							getline(gcn, gcn_names,';');	
+							cout << gcn_names << " ";
+							
+						}
 					}
 					cout << endl;
-                                        cout << "Column name: ";
+					//cout << "Please select a table." << endl;
+					//cin >> table_change_column;
+					//cout << "Enter the column name to be deleted. " << endl;
+                                        cout << "Enter a column name: ";
                                         cin >> add_column_name;
 					
 					cout << "DB: " + alter_name + " TB: " + table_change_column + " Col.: " + add_column_name << endl;
