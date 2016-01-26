@@ -143,6 +143,111 @@ switch (choice)
 		cout << "Enter your selection: ";
 		cin >> table_change_column;
 
+		string trim = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);							
+		string tsf = "kendo_db/" + alter_name + "/table_info.kendo";
+                                        cout << "Enter the column name to extract from. Use a comma for multiple columns, or '*' to select all. " << endl;
+					gcn.open(tsf.c_str());
+					
+					//getline(gcn, gcn_names,';');
+					//cout << gcn_names << endl;
+					int q = 0;
+					int r = 0;
+					string gcn_whole;
+					while(getline(gcn >> ws, gcn_names,';'))
+					{	
+						if (gcn_names == trim)
+						{
+	
+							getline(gcn, gcn_names,';');	
+							cout << gcn_names << " ";
+							
+						}
+					}
+					cout << endl;
+					//cout << "Please select a table." << endl;
+					//cin >> table_change_column;
+					//cout << "Enter the column name to be deleted. " << endl;
+                                        cout << "Enter a column name: ";
+                                        cin >> add_column_name;
+					
+					cout << "DB: " + alter_name + " TB: " + table_change_column + " Col.: " + add_column_name << endl;
+
+					drop_column_search.open("kendo_db/" + alter_name + "/table_info.kendo");
+					//temp_dcs.open("kendo_db/" + alter_name + "/table_info_temp.kendo",ios::app);
+					cout << "Now opening /kendo_db/" + alter_name + "/table_info.kendo..." << endl;
+					int tally = 0;
+					while(getline(drop_column_search, check_for_column))
+					{
+						//cout << "Before: " + check_for_column << endl;
+						char_to_be_gone = add_column_name + ";";
+						string found_table = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
+						size_t ft = check_for_column.find(found_table);
+						size_t found = check_for_column.find(char_to_be_gone);
+						if(ft != string::npos)
+						{
+							tally = tally + 1;
+							//cout << "Tally: " << tally << endl;
+
+						}
+						if (found != string::npos && ft != string::npos)
+						{
+							//cout << "Deleting column..." << endl;
+							digit = tally;
+							//cout << "Character to be gone: " << char_to_be_gone << endl;
+						}
+
+						else 
+						{
+							//temp_dcs << check_for_column << endl;
+						}
+					}
+
+					drop_column_search.close();
+					temp_dcs.close();
+
+					//string old_name = "kendo_db/" + alter_name + "/table_info.kendo";
+					//string new_name = "kendo_db/" + alter_name + "/table_info_temp.kendo";
+					//remove(old_name.c_str());
+                                        //rename(new_name.c_str(),old_name.c_str());
+
+					table_structure_filename = "kendo_db/" + alter_name + "/" + table_change_column + ".table";
+					cout << "Reading kendo_db/" + alter_name + "/" + table_change_column + ".table..." << endl; 
+					table_edit.open(table_structure_filename.c_str());
+					table_edit_sc.open(table_structure_filename.c_str());
+					string table_edit_line;
+					int track = 1;
+					string column_array[99]; //Assuming the table has 99 columns maximum
+					while(getline(table_edit_sc,table_edit_line_sc))
+					{
+						while(getline(table_edit,table_edit_line,';'))
+                                                {
+                                                        //getline(table_edit_sc,table_edit_line_sc);
+                                                        //cout << "Original line: " << table_edit_line_sc << endl; 
+                                                        //cout << "Parsing line..." << endl;
+                                                        //cout << "Digit: " << digit << " Track: " << track << endl;
+                                                        column_array[track] = table_edit_line;
+                                                        //cout << "Parsed element: " << table_edit_line << endl;
+                                                       // cout << "Does " << digit << " equal " << track << "?" << endl;
+							//cout << "Tally: " << tally << endl;
+                                                        if(track == digit)
+                                                        {
+                                                                //cout << "Yes!" << endl;
+                                                                //cout << "Column: " + column_array[track] << endl;
+                                                                //cout << track << endl;
+                                                                string value_to_erase = column_array[track];
+                                                                cout << "Value: " << value_to_erase << endl;
+                                                                //removeSubstrs(table_edit_line_sc, value_to_erase);
+                                                               // cout << "Entire line: " << table_edit_line_sc << endl;
+                                                        }
+							if(track == tally)
+							{	
+								track = 1;
+							}
+							else track++;
+                                                }
+
+					}
+
 		
 		break;
 	}
