@@ -167,7 +167,7 @@ switch (choice)
 					//cout << "Please select a table." << endl;
 					//cin >> table_change_column;
 					//cout << "Enter the column name to be deleted. " << endl;
-                                        cout << "Enter a column name: ";
+                                        cout << "Enter a column name(s): ";
                                         cin >> add_column_name;
 					
 					cout << "DB: " + alter_name + " TB: " + table_change_column + " Col.: " + add_column_name << endl;
@@ -176,76 +176,106 @@ switch (choice)
 					//temp_dcs.open("kendo_db/" + alter_name + "/table_info_temp.kendo",ios::app);
 					cout << "Now opening /kendo_db/" + alter_name + "/table_info.kendo..." << endl;
 					int tally = 0;
-					while(getline(drop_column_search, check_for_column))
+					string comma = ",";
+					std::size_t found = add_column_name.find(comma);
+  					if (found!=std::string::npos)
 					{
-						//cout << "Before: " + check_for_column << endl;
-						char_to_be_gone = add_column_name + ";";
-						string found_table = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
-						size_t ft = check_for_column.find(found_table);
-						size_t found = check_for_column.find(char_to_be_gone);
-						if(ft != string::npos)
+						size_t pos = 0;	 
+						string token; 
+						string col_arr[99]; //Assuming the table has 99 columns maximum 
+						int m = 0; 						
+						
+						while ((pos = add_column_name.find(comma)) != std::string::npos) 
 						{
-							tally = tally + 1;
-							//cout << "Tally: " << tally << endl;
-
+    							token = add_column_name.substr(0, pos);
+    							//cout << token << endl;
+    							add_column_name.erase(0, pos + comma.length());
+							col_arr[m] = token;
+							m++;
 						}
-						if (found != string::npos && ft != string::npos)
+						
+						col_arr[m] = add_column_name;
+					
+						for(int a = 0;a <= m;a++)
 						{
-							//cout << "Deleting column..." << endl;
-							digit = tally;
-							//cout << "Character to be gone: " << char_to_be_gone << endl;
-						}
+							while(getline(drop_column_search, check_for_column))
+							{
+								char_to_be_gone = col_arr[a] + ";";
+								string found_table = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);	
+								size_t ft = check_for_column.find(found_table);
+								size_t found = check_for_column.find(char_to_be_gone);
+								if(ft != string::npos)
+								{
+									tally = tally + 1;
+									//cout << "Tally: " << tally << endl;
+		
+								}
+								if (found != string::npos && ft != string::npos)
+								{
+									digit = tally;
+								}
 
-						else 
-						{
-							//temp_dcs << check_for_column << endl;
+								else 
+								{
+							
+								}
+							}
 						}
 					}
-
-					drop_column_search.close();
-					temp_dcs.close();
-
-					//string old_name = "kendo_db/" + alter_name + "/table_info.kendo";
-					//string new_name = "kendo_db/" + alter_name + "/table_info_temp.kendo";
-					//remove(old_name.c_str());
-                                        //rename(new_name.c_str(),old_name.c_str());
-
-					table_structure_filename = "kendo_db/" + alter_name + "/" + table_change_column + ".table";
-					cout << "Reading kendo_db/" + alter_name + "/" + table_change_column + ".table..." << endl; 
-					table_edit.open(table_structure_filename.c_str());
-					table_edit_sc.open(table_structure_filename.c_str());
-					string table_edit_line;
-					int track = 1;
-					string column_array[99]; //Assuming the table has 99 columns maximum
-					while(getline(table_edit_sc,table_edit_line_sc))
+					else 
 					{
-						while(getline(table_edit,table_edit_line,';'))
-                                                {
-                                                        //getline(table_edit_sc,table_edit_line_sc);
-                                                        //cout << "Original line: " << table_edit_line_sc << endl; 
-                                                        //cout << "Parsing line..." << endl;
-                                                        //cout << "Digit: " << digit << " Track: " << track << endl;
-                                                        column_array[track] = table_edit_line;
-                                                        //cout << "Parsed element: " << table_edit_line << endl;
-                                                       // cout << "Does " << digit << " equal " << track << "?" << endl;
-							//cout << "Tally: " << tally << endl;
-                                                        if(track == digit)
-                                                        {
-                                                                //cout << "Yes!" << endl;
-                                                                //cout << "Column: " + column_array[track] << endl;
-                                                                //cout << track << endl;
-                                                                string value_to_erase = column_array[track];
-                                                                cout << "Value: " << value_to_erase << endl;
-                                                                //removeSubstrs(table_edit_line_sc, value_to_erase);
-                                                               // cout << "Entire line: " << table_edit_line_sc << endl;
-                                                        }
-							if(track == tally)
-							{	
-								track = 1;
+						while(getline(drop_column_search, check_for_column))
+						{
+							//cout << "Before: " + check_for_column << endl;
+							char_to_be_gone = add_column_name + ";";
+							string found_table = table_change_column.erase(table_change_column.find_last_not_of(".table")+1);
+							size_t ft = check_for_column.find(found_table);
+							size_t found = check_for_column.find(char_to_be_gone);
+							if(ft != string::npos)
+							{
+								tally = tally + 1;
+								//cout << "Tally: " << tally << endl;
+	
 							}
-							else track++;
-                                                }
+							if (found != string::npos && ft != string::npos)
+							{
+								digit = tally;
+							}
+	
+							else 
+							{
+								
+							}
+						}
+	
+						drop_column_search.close();
+						temp_dcs.close();
 
+						table_structure_filename = "kendo_db/" + alter_name + "/" + table_change_column + ".table";
+						cout << "Reading kendo_db/" + alter_name + "/" + table_change_column + ".table..." << endl; 
+						table_edit.open(table_structure_filename.c_str());
+						table_edit_sc.open(table_structure_filename.c_str());
+						string table_edit_line;
+						int track = 1;
+						string column_array[99]; //Assuming the table has 99 columns maximum
+						while(getline(table_edit_sc,table_edit_line_sc))
+						{
+							while(getline(table_edit,table_edit_line,';'))
+                                	                {
+                                	                        column_array[track] = table_edit_line;
+                                	                        if(track == digit)
+                                	                        {
+                                	                                string value_to_erase = column_array[track];
+                                	                                cout << "Value: " << value_to_erase << endl;
+                                	                        }
+								if(track == tally)
+								{	
+									track = 1;
+								}
+								else track++;
+                                	                }
+	
+						}
 					}
 
 		
