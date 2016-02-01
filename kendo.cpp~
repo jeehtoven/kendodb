@@ -246,8 +246,7 @@ switch (choice)
 							table_edit_sc.open(table_structure_filename.c_str());
 							string table_edit_line;
 							string table_edit_line_sc; 
-
-							table_edit.open(table_structure_filename.c_str());			
+							
 							string column_array[99]; //Assuming the table has 99 columns maximum	
 							while(getline(table_edit,table_edit_line,';'))
                                 	        	{											

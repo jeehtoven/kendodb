@@ -67,7 +67,7 @@ cout << "10. CREATE INDEX" << endl;
 cout << "11. DROP INDEX" << endl;
 cout << "Your selection: ";
 
-//Declarations
+//Declarations for the program
 string name;
 string directory;
 string result;
